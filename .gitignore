@@ -213,3 +213,10 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+
+#NinjaIDE settings
+*.nja
+
+#GPS Files
+*.kmz
+*.kml
