@@ -40,3 +40,6 @@ class Steering_Drive_Actuator(Actuator):
         print("waiting for mc to finish")
         #self.mc.thd.join()
         print("motor controller finished closing")
+
+    def __str__(self):
+        return "<Steering/Drive Actuator with motor controller '{}'>".format(str(self.mc))
