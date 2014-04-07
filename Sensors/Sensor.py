@@ -46,6 +46,7 @@ class Sensor(object):
         print("setting stop flag")
         self.stop_flag.set()
 
+
 class TestSensor(Sensor):
 
     def __init__(self, master_queue, name, mi=0, ma=10, delay=0.5):
