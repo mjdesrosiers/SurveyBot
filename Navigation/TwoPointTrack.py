@@ -23,18 +23,25 @@ class TwoPointTrack:
         self.brgd = m.degrees(self.brg)
 
     def otd(self, pt):
+        """Get the off-track distance to the point- the perpindicular distance from the point to
+        the line connecting the start and end points"""
         dist_pt_rad = self.start.distance_to(pt) / GPSPoint.RADIUS_WGS84
         brg_pt = self.start.bearing_to(pt)
-        #TODO range check argument to asin
-        otd = m.asin(m.sin(dist_pt_rad) * m.sin(brg_pt - self.brg))
-        return otd * GPSPoint.RADIUS_WGS84
+        arg = m.sin(dist_pt_rad) * m.sin(brg_pt - self.brg)
+        arg = max(min(arg, 1), -1)
+        otd_rad = m.asin(arg)
+        return otd_rad * GPSPoint.RADIUS_WGS84
 
     def atd(self, pt):
+        """Get the along-track distance to the point- the 'progress' along the track. Mathematically,
+        the magnitude of the vector from the start to the point projected on to the vector from the
+        start to the end."""
         dist_pt_rad = self.start.distance_to(pt) / GPSPoint.RADIUS_WGS84
         otd_rad = self.otd(pt) / GPSPoint.RADIUS_WGS84
-        #TODO range check argument to asin
-        atd = m.asin(m.sqrt((m.sin(dist_pt_rad)) ** 2 - (m.sin(otd_rad)) ** 2) / m.cos(otd_rad))
-        return atd * GPSPoint.RADIUS_WGS84
+        arg = m.sqrt((m.sin(dist_pt_rad)) ** 2 - (m.sin(otd_rad)) ** 2) / m.cos(otd_rad)
+        arg = max(min(arg, 1), -1)
+        atd_rad = m.asin(arg)
+        return atd_rad * GPSPoint.RADIUS_WGS84
 
     def __str__(self):
         return "TwoPointTrack: \n\tStart:{}\n\tStart:{}\n\tEnd:{}\n\tEnd:{}".format(
