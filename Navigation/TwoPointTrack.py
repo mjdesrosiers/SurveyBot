@@ -23,8 +23,13 @@ class TwoPointTrack:
         self.brgd = m.degrees(self.brg)
 
     def otd(self, pt):
-        """Get the off-track distance to the point- the perpindicular distance from the point to
-        the line connecting the start and end points"""
+        """
+        Get the off-track distance to the point- the perpindicular distance from the point to
+        the line connecting the start and end points
+        distance in km
+        positive => to the right
+        negative => to the left
+        """
         dist_pt_rad = self.start.distance_to(pt) / GPSPoint.RADIUS_WGS84
         brg_pt = self.start.bearing_to(pt)
         arg = m.sin(dist_pt_rad) * m.sin(brg_pt - self.brg)
@@ -33,9 +38,12 @@ class TwoPointTrack:
         return otd_rad * GPSPoint.RADIUS_WGS84
 
     def atd(self, pt):
-        """Get the along-track distance to the point- the 'progress' along the track. Mathematically,
+        """
+        Get the along-track distance to the point- the 'progress' along the track. Mathematically,
         the magnitude of the vector from the start to the point projected on to the vector from the
-        start to the end."""
+        start to the end.
+        distance in km
+        """
         dist_pt_rad = self.start.distance_to(pt) / GPSPoint.RADIUS_WGS84
         otd_rad = self.otd(pt) / GPSPoint.RADIUS_WGS84
         arg = m.sqrt((m.sin(dist_pt_rad)) ** 2 - (m.sin(otd_rad)) ** 2) / m.cos(otd_rad)

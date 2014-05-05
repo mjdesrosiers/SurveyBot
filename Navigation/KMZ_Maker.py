@@ -6,7 +6,7 @@
 dummy = """<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
 <Document>
-	<name>dummy_path.kmz</name>
+	<name>{name}</name>
 	<Style id="s_ylw-pushpin_hl">
 		<IconStyle>
 			<scale>1.3</scale>
@@ -63,7 +63,7 @@ placemark = """	<Placemark>
 	</Placemark>"""
 
 
-def make_kmz(point_set):
+def make_kmz(point_set, fname="points"):
     points = ""
     coord = "{},{},0  "
     for tup in point_set:
@@ -71,8 +71,15 @@ def make_kmz(point_set):
         print("adding: <{},{}>".format(lat, lng))
         points += coord.format(lng, lat)
         _placemark = placemark.format(name="1", coords=points)
-    with open("points.kmz", 'w') as f:
-        f.write(dummy.format(placemarks=_placemark))
+    with open(fname + ".kmz", 'w') as f:
+        f.write(dummy.format(placemarks=_placemark, name=fname))
+
+def make_csv(point_set, fname="points"):
+    out = ""
+    for tup in point_set:
+        out += str(tup[0]) + "," + str(tup[1]) + "\n"
+    with open(fname + ".csv", 'w') as f:
+        f.write(out)
 
 
 pts = [(38.035126, -78.49606400000002, 1.1145630400880656e-12),

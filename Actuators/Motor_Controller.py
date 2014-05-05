@@ -53,7 +53,7 @@ class Motor_Controller(Actuator):
         if not isinstance(cmd, Command_Packet):
             print("Command was not a Command_Packet. Not acting on it.")
             return
-        if SIMM_MODE_ACTIVE:
+        if SIMM_MODE_ACTIVE or True:
             pp(cmd.command)
         if CHANNEL_0 in cmd.command:
             try:
@@ -106,12 +106,16 @@ if __name__ == "__main__":
     times = 0
     early_end = False
     try:
+        print("starting try's'")
         while times < 10:
+            print("time is: " + str(times))
             if (times % 2 == 0):
                 q.put(Command_Packet("<__main__>", {"ch0": 50, "ch1": 0}))
             else:
                 q.put(Command_Packet("<__main__>", {"ch0": 0, "ch1": 50}))
+            print("before sleep")
             time.sleep(3)
+            print("after sleep")
             times = times + 1
     except KeyboardInterrupt:
         print("caught keyboardinterrupt")

@@ -26,7 +26,7 @@ class DummyGPSSensor(Sensor):
         x_delta = t_delta * self.speed
         point_now = self.vincenty.destination(self.start_point, self.brg, x_delta)
         x_from_start = self.vincenty.measure(point_now, self.start_point)
-        dy = 0.01 * m.sin(x_from_start*100)
+        dy = 0.01 * m.sin(x_from_start * 100)
         noise = dy
         mybrg = (self.brg + 90 + 360) % 360
         point_now = self.vincenty.destination(point_now, mybrg, noise)

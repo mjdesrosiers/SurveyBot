@@ -33,6 +33,10 @@ class GPS_Sensor(Sensor):
             lat_min = latf - lat_int * 100
             lat_dec = lat_min / 60
             lat_number = lat_int + lat_dec
+            sign = 1
+            if (lat_dir == "S"):
+                sign = -1
+            lat_number *= sign
 
         if lng:
             lngf = float(lng)
@@ -40,8 +44,13 @@ class GPS_Sensor(Sensor):
             lng_min = lngf - lng_int * 100
             lng_dec = lng_min / 60
             lng_number = lng_int + lng_dec
+            sign = 1
+            if (lng_dir == "W"):
+                sign = -1
+            lng_number *= sign
 
-        return title + " @ " + time + " : " + str(lat_number) + lat_dir + ", " + str(lng_number) + lng_dir
+        if lat and lng:
+            return (lat_number, lng_number)
 
     def get_line(self, start_filter=None):
         out = self.port.readline()[:-1]
@@ -68,7 +77,7 @@ class GPS_Sensor(Sensor):
 if __name__ == "__main__":
     print("starting!")
     sensor_data = Queue.Queue()
-    g = GPS_Sensor(sensor_data, filter_tag = "GPGGA")
+    g = GPS_Sensor(sensor_data, filter_tag="GPGGA")
     g.start()
     while True:
         if not sensor_data.empty():

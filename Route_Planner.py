@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from Sensors import DummyGPS
+from Sensors import GPS_Sensor
 from Navigation import TwoPointTrack
 from Navigation import GPSPoint
 from Actuators import Steering_Drive_Actuator
@@ -12,18 +13,20 @@ RUN_LENGTH = 30
 def do_route_plan(track):
     gps_queue = Queue.Queue()
     sda_queue = Queue.Queue()
+    gps_real_queue = Queue.Queue()
     st_pt = track.start.to_point()
     ed_pt = track.end.to_point()
     gps = DummyGPS.DummyGPSSensor(gps_queue, st_pt, ed_pt)
     sda = Steering_Drive_Actuator.Steering_Drive_Actuator(sda_queue, track)
-    gps.start()
+    gps_real = GPS_Sensor.GPS_Sensor(gps_real_queue, filter_tag="GPGGA")
+    gps_real.start()
     sda.start()
     start = time.time()
     print("starting!")
 
     while ((time.time() - start) < 60):
-        if not gps_queue.empty():
-            pkt = gps_queue.get(block=True, timeout=0.5)
+        if not gps_real_queue.empty():
+            pkt = gps_real_queue.get(block=True, timeout=0.5)
             data = pkt.data
             lat = data[0]
             lon = data[1]
@@ -32,9 +35,9 @@ def do_route_plan(track):
             if track.atd(gps_now_pt) > track.track_distance:
                 print("reached end of track")
                 break
-    gps.stop()
+    gps_real.stop()
     sda.stop()
-    gps.thd.join()
+    gps_real.thd.join()
     print("gps finished closing")
     sda.thd.join()
     print("sda finished closing")
@@ -42,7 +45,7 @@ def do_route_plan(track):
     print("ran out of time, ending")
 
 if __name__ == "__main__":
-    lat_0, lon_0 = 38.035126, -78.496064
+    lat_0, lon_0 = 38.042068, -78.495975
     lat_1, lon_1 = lat_0 + 0.003, lon_0 - 0.003
     start_gps = GPSPoint.GPSPoint(lat_0, lon_0)
     end_gps = GPSPoint.GPSPoint(lat_1, lon_1)
